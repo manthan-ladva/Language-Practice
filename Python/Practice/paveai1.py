@@ -1,0 +1,8 @@
+#abcd = input("")
+word = input("")
+b = word.split()
+word = sorted(word)
+a = set(word)
+print(word)
+print(a)
+print(b)
