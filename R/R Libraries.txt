@@ -1,0 +1,9 @@
+ggplot2
+plotly
+htmlWidgets
+xlsx
+rvest
+readxl
+data.table
+dplyr
+tidyr

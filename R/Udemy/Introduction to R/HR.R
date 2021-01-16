@@ -1,0 +1,83 @@
+library(tidyverse)
+library(corrgram)
+library(ggplot2)
+library(ggthemes)
+library(party)
+library(caret)
+
+# Importing Data ----------------------------------------------------------
+
+commute_data <- read.csv("data/commute_data.csv")
+hr_employees_performance_data <- read.csv("data/hr_employees_performance_data.csv")
+personal_data <- read.csv("data/personal_data.csv", stringsAsFactors = FALSE)
+research_and_development_data <- read.csv("data/research_and_development_employees_performance_data.csv")
+sales_employees_performance_data <- read.csv("data/sales_employees_performance_data.csv")
+
+personal_data_raw <- personal_data %>% 
+  spread(key = Variable, value = Value) %>%
+  mutate(Age = as.integer(Age),
+         Attrition = as.factor(Attrition),
+         Education = as.integer(Education),
+         EducationField = as.factor(EducationField),
+         Gender = as.factor(Gender),
+         MaritalStatus = as.factor(MaritalStatus),
+         RelationshipSatisfaction = as.factor(RelationshipSatisfaction)) %>%
+  select(-EmployeeCount)
+
+hr_employees_performance_data <- select(hr_employees_performance_data, -X)
+sales_employees_performance_data <- select(sales_employees_performance_data, -X)
+research_and_development_data <- select(research_and_development_data, -X)
+commute_data <- select(commute_data, -X)
+
+hr_employees_performance_data <- hr_employees_performance_data %>%
+  mutate(Department = 'HR')
+sales_employees_performance_data <- sales_employees_performance_data %>%
+  mutate(Department = 'Sales')
+research_and_development_data <- research_and_development_data %>%
+  mutate(Department = 'RnD')
+
+performance_data <- rbind(hr_employees_performance_data, sales_employees_performance_data, research_and_development_data)
+performance_data <- mutate(performance_data, Department = as.factor(Department))
+
+employee_data <- left_join(performance_data, commute_data, by = 'EmployeeNumber')
+employee_data <- inner_join(employee_data, performance_data, by = 'EmployeeNumber')
+
+
+rates <- employee_data %>%
+  select(DailyRate.x, HourlyRate.x, MonthlyRate.x, MonthlyIncome.x)
+corrgram(rates, upper.panel = panel.conf, lower.panel = panel.pts)
+
+
+a1 <- employee_data %>%
+  select(Gender, Attrition) %>%
+  group_by(Gender, Attrition) %>%
+  summarise(Count = n())
+
+p1 <- ggplot(data = employee_data, aes(x = HourlyRate.x, y = MonthlyRate.x)) +
+  geom_boxplot()
+p1
+
+p2 <- ggplot(data = employee_data, aes(x = HourlyRate.x, y = MonthlyRate.x, fill='Department')) +
+  geom_boxplot()
+p2
+
+p3 <- ggplot(data = employee_data, aes(x = HourlyRate.x, fill='MonthlyRate.x')) +
+  geom_histogram(alpha = 0.4)+
+  facet_wrap(~'Department', ncol = 1) +
+  scale_fill_fivethirtyeight()
+p3
+
+p4 <- ggplot(data = personal_data_raw, aes(x = Age, y = EmployeeNumber))+
+  geom_point(aes(color = 'Attrition'))+
+  geom_smooth()
+p4
+
+p5 <- ggplot(data = personal_data_raw, aes(x = Age, fill = as.factor('PerformanceRating')))+
+  geom_bar(position = 'dodge')
+p5
+
+
+
+# Model -------------------------------------------------------------------
+
+dataSplitter <-

@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1547380877140.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "CCFED16",
+    "lastKnownWriteTime" : 1547405992,
+    "last_content_update" : 1547476447997,
+    "path" : "~/R/Introduction to R/HR.R",
+    "project_path" : "HR.R",
+    "properties" : {
+        "cursorPosition" : "4,14",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
